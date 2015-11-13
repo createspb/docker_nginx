@@ -6,10 +6,12 @@ RUN add-apt-repository ppa:nginx/stable && \
     apt-get update && \
     apt-get install -y --force-yes nginx=1.8.* && \
     rm /etc/nginx/sites-enabled/default && \
-    mkdir /etc/service/nginx
+    mkdir /etc/service/nginx && \
+    mkdir /etc/nginx/conf.mount
 
 # Nginx service
 ADD run_nginx.sh /etc/service/nginx/run
+ADD /service.conf /etc/nginx/conf.mount/service.conf
 
 # nginx gotta be in foreground
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf && \
@@ -17,7 +19,7 @@ RUN echo "daemon off;" >> /etc/nginx/nginx.conf && \
     chmod 755 /etc/service/nginx/run && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-VOLUME ["/etc/nginx/certs", "/etc/nginx/conf.d"]
+VOLUME ["/etc/nginx/certs", "/etc/nginx/conf.mount"]
 
 EXPOSE 80
 EXPOSE 443
